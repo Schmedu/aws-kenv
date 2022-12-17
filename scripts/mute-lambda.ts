@@ -5,9 +5,10 @@
 import "@johnlindquist/kit";
 // @ts-ignore
 import AWS from "aws-sdk";
+import { getRegion } from "../../../lib/aws";
 
 const lambda = new AWS.Lambda({
-    region: "eu-central-1",
+    region: await getRegion(),
 });
 
 var params = {
@@ -15,16 +16,43 @@ var params = {
 };
 let data = await lambda.listFunctions(params).promise();
 
-// await inspect({ a: data });
 let funcs = data.Functions.map((f) => f.FunctionName);
 
-let func = await arg("Mute Lambda by setting concurrency to 0", funcs);
+let func = await arg(
+    {
+        name: "Mute Lambda by setting concurrency to 0",
+        flags: {
+            all: {
+                name: "All with Stack name",
+                description: "Stop all Lambdas with a given Stack name",
+                shortcut: "cmd + a",
+            },
+        },
+    },
+    funcs
+);
 
-let req = lambda
-    .putFunctionConcurrency({
-        FunctionName: func,
-        ReservedConcurrentExecutions: 0,
-    })
-    .promise();
+if (flag?.all) {
+    let stack = func.split("-")[0];
+    let funcs = data.Functions.filter((f) => f.FunctionName.startsWith(stack));
 
-await inspect({ a: req });
+    await inspect({ funcs });
+
+    let reqs = funcs.map(async (f) => {
+        return await lambda
+            .putFunctionConcurrency({
+                FunctionName: f.FunctionName,
+                ReservedConcurrentExecutions: 0,
+            })
+            .promise();
+    });
+    await inspect({ reqs });
+} else {
+    let req = await lambda
+        .putFunctionConcurrency({
+            FunctionName: func,
+            ReservedConcurrentExecutions: 0,
+        })
+        .promise();
+    await inspect({ req });
+}
