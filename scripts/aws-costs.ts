@@ -1,4 +1,4 @@
-// Name: Get monthly costs
+// Name: Get monthly aws costs
 // Author: Eduard Uffelmann
 // Twitter: @schmedu_
 
