@@ -19,7 +19,6 @@ try {
     const data = await ddbClient.send(new ListTablesCommand({}));
     await inspect({ data });
     let table = await arg("Which table?", data.TableNames);
-    }
     // console.log(data.TableNames.join("\n"));
 } catch (err) {
     notify(err);
