@@ -28,6 +28,6 @@ const response = await client.send(command);
 
 notify({
     title: "AWS costs",
-    message:
+    body:
         response.ResultsByTime[0].Total.UnblendedCost.Amount.slice(0, 4) + "€",
 });

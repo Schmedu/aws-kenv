@@ -49,7 +49,7 @@ let stream = await arg(
 //             all: {
 //                 name: "All with Stack name",
 //                 description: "Stop all Lambdas with a given Stack name",
-//                 shortcut: "cmd + a",
+//                 // shortcut: "cmd + a",
 //             },
 //         },
 //     },
